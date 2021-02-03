@@ -1,0 +1,616 @@
+
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<?php
+  $i=0;
+?>
+<script type="text/javascript" src="javascript/jquery.js"></script>
+<head>
+  <!-- Load Icon library 
+  ref
+https://fontawesome.com/v4.7.0/cheatsheet/
+https://fontawesome.com/v4.7.0/examples/-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- all libraly of css w3 (button input)
+  ref
+https://www.w3schools.com/w3css/w3css_buttons.asp-->
+
+
+<link href='https://fonts.googleapis.com/css?family=Kanit' rel='stylesheet'>
+<link rel="stylesheet" href="w3.css">
+</head>
+<style>
+  .container {
+    top:50%;
+    left:50%;
+  }
+  .tab {
+    overflow: hidden;
+    border: 1px solid #f1f1f1;
+    background-color: #f1f1f1;
+    width:400px;
+    font-family: 'Kanit';
+    font-size: 30px;
+    border-radius: 10px;
+  }
+
+  /* Style the buttons inside the tab */
+  .tab button.tablinks {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+    width:199px;
+  }
+  .w3-button {
+    width:50px;
+  }
+  /* Change background color of buttons on hover */
+  .tab button.tablinks:hover {
+    background-color: #C0C0C0;
+  }
+
+  /* Create an active/current tablink class */
+  .tab button.active {
+    background-color: #ddd;
+  }
+  .tab-first-table {
+    background-color: #ddd;
+  }
+
+  /* Style the tab content */
+  .tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+
+    background-color: #ddd;
+    border-top: none;
+    width:400px;
+  }
+  body {
+      font-family: 'Kanit';font-size: 14px;
+  }
+
+  #tablePopup{
+    background-color:white;
+    border-style: solid;
+    border-color: black;
+    border-width: 1px;
+    width:400px;
+    height:300px;
+    display:none;
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    top:25%;
+    left: 0;
+    right: 0;
+    text-align: center;
+  }
+</style>
+<body >
+
+<center>
+  <div class="tab">
+    <button class="tablinks" onclick="openTab(event,'payList')"><i class="fa fa-list-ul"></i>  อาหาร</button>
+    <button class="tablinks" onclick="openTab(event,'billShared')"><i class="fa fa-btc"></i>  ค่าใช้จ่ายต่อคน</button>
+    <div class="tab-first-table">
+      <table>
+        <tr> <td style="width:200px;text-align: center;font-size: 18px"><b>จำนวนคนทั้งหมด </b></td> <td style="width:200px;text-align: center;font-size: 18px"><b> ราคาทั้งหมด </b></td></tr>
+        <tr><td style="text-align: center;font-size: 28px" id='allPeopleShow'><b> </b></td><td style="text-align: center;font-size: 28px" id='allPriceShow'><b> </b></td></tr>
+      </table>
+    </div>
+    <div id="payList" class="tabcontent">
+      
+    <table id="mainTable">
+
+      <th>สินค้า</th><th>ราคา</th><th>
+            
+      <tr id="firstRow"><td><input class="w3-input w3-border w3-round"  type="text" id="product" value="product"></td>
+                        <td><input class="w3-input w3-border w3-round" type="number" id="price" value="0" onfocusout="this.value=Number(this.value)"></td>
+                        <td><button class="w3-button w3-blue w3-round-large" id="addBtn">เพิ่ม</button></td>
+                        <td></td></tr>
+
+    </table>
+    <button class="w3-button w3-red w3-round-large"  style="font-size: 12px;width:370px" id="clearData"><i class="fa fa-close fa-lg"></i>ลบข้อมูลทั้งหมด</button>
+  </div>
+
+
+
+
+
+  <div id="billShared" class="tabcontent">
+    <table id="secondtable">
+      <th style="width: 100px;">ชื่อ</th><th style="width: 100px">ต้องจ่าย</th><th style="width: 100px">จ่ายไปแล้ว</th><th style="width: 100px">ค้างรับ</th>
+            
+    </table>
+  </div>
+</center>
+
+
+
+</div>
+
+
+
+  
+
+<center>
+<div id="tablePopup" style="border-radius: 10px;">
+  <div style="display: flex;margin:30px;
+  justify-content: center;">
+  <center>
+    
+    <table style="align-self: center;margin: 0 auto">
+      <tr><td> ชื่อสินค้า</td><td><input style="border-radius: 4px;border-width: thin" id="tablePopupProduct" type="text" /></td></tr>
+      <tr><td>ราคา</td><td><input style="border-radius: 4px;border-width: thin" id="tablePopupPrice" type="number" /></td></tr>
+
+      <tr><td>ใครกิน</td><td><table style="align-self: center;margin: 0 auto">
+                <tr id="showEating"></tr>
+              </table></td></tr>
+      <tr><td></td><td><input style="border-radius: 4px;border-width: thin" id="tablePopupEating" type="text" /></td>
+          <td><button id="addEating">เพิ่ม</button></td></tr>
+
+      <tr><td>จ่ายโดย</td><td><table style="align-self: center;margin: 0 auto">
+              <tr id="showPaidBy"></tr>
+              </table></td></tr>
+      <tr><td></td><td><input style="border-radius: 4px;border-width: thin" id="tablePopupPaidBy" type="text" /></td>
+          <td><button id="addPaidBy">เพิ่ม</button></td></tr>
+      
+      <tr><td></td><td><input id="tablePopupKey" type="text" disabled hidden></td></tr>
+    </table>
+      <button id="enterTablePopup">ตกลง</button>
+      <button id="closeTablePopup">ยกเลิก</button>
+  </center>
+  </div>
+</div>
+</center>
+
+
+</body>
+
+
+ 
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="javascript/sweetAlert.js"></script>
+<script type="text/javascript" src="javascript/goBack.js"></script>
+<script type="text/javascript">
+function openTab(evt,tabName) {
+  var i, tabcontent, tablinks;
+  tabcontent = $(".tabcontent");
+  //console.log(tabcontent[0].style);
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = $(".tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  $("#"+tabName).css('display','block');
+  evt.currentTarget.className += " active";
+  //$(".tablinks").className +=" active";
+}
+
+
+  var localStorageArraySort=[];
+  var value;
+  var flagTurnOnClick=1;
+  var obj;
+  var people;
+  var currentRow;
+  var sumPrice=0;
+  $(document).ready(function(){
+   /*if (typeof window.orientation !== 'undefined'){
+    alert("this is mobile");
+   }else{
+    alert("this is pc");
+   }*/
+    atStartPage();
+
+    //button click function
+    $("#addBtn").click(function(){
+      var arrayInObj;
+      var memberInsideObj={
+        food:$("#product").val(),
+        price:$("#price").val(),
+        paidBy:[],
+        eating:[]
+      };
+
+      // กรณียังไม่มี local storage
+      if(localStorage.getItem('foodList')===null){
+        obj={member:[memberInsideObj]}
+        
+      // กรณียังสร้างไว้แล้วก็ต้องดึงค่าออกมาก่อนแล้ว push กลับเข้าไป
+      }else{
+        obj= JSON.parse(localStorage.getItem("foodList"));
+        arrayInObj={member:memberInsideObj}
+        obj.member.push(arrayInObj.member);
+      }
+      if(localStorage.getItem("people")===null){
+        people={eatingPeople:[]};
+      }
+      localStorage.setItem("foodList",JSON.stringify(obj));
+      localStorage.setItem("people",JSON.stringify(people));
+
+        var sumPrice=0;
+        for(i in obj.member){
+          sumPrice+=Number(obj.member[i].price);
+        }
+        $("#allPriceShow").html(sumPrice);
+        //obj= JSON.parse(localStorage.getItem("foodList"));
+      appendNewHTMLRow(obj.member.length-1);
+
+
+    });
+
+    //clear all data and reload page again
+    $("#clearData").click(function(){
+      localStorage.clear();
+      location.reload();
+    });
+
+    //main table click property
+    $("#mainTable").on("click",'.text',function(){
+      currentRow=$(this).closest("tr"); 
+      $("#tablePopup").slideDown(100,function(){
+        if(flagTurnOnClick==1)
+        {
+          $("#tablePopupProduct").val(currentRow.find("td:eq(0)").text());
+          $("#tablePopupPrice").val(currentRow.find("td:eq(1)").text());
+          $("#tablePopupKey").val(currentRow.attr("id"));
+
+          people = JSON.parse(localStorage.getItem("people"));
+          obj =JSON.parse(localStorage.getItem("foodList"));
+          console.log(people);
+
+          showPeopleList(currentRow.attr("id"));
+
+          flagTurnOnClick=0; //unable to click another tr
+        }
+      });
+    });
+
+    $("#addPaidBy").on('click',function(){
+
+            if($("#tablePopupPaidBy").val()!=""){
+
+              var count=0;
+              //ถ้ายังไม่เคยมีตัวแปลก็เพิ่มเข้าไปเลย
+              for(i in people.eatingPeople){
+
+                if($("#tablePopupPaidBy").val().toLowerCase()!=people.eatingPeople[i].name.toLowerCase()){
+                    //console.log(i,$("#tablePopupPaidBy").val(),value.paidBy[i]);
+                    count++;
+                  }else{
+                    break;
+                  }
+                  //ถ้าเช็คไปตัวแล้วยังไม่เจอตัวซ้ำถึงค่อยเพิ่มเข้าไปในรายชื่อใหม่
+                  console.log(count,people.eatingPeople.length);
+              }
+
+              if(count==people.eatingPeople.length)
+              {     
+                var memberInsidePeople={  
+                  name:$("#tablePopupPaidBy").val(),
+                  pricePaid:"0",
+                  priceAlreadyPaid:"0"
+                  };               
+                people.eatingPeople.push(memberInsidePeople);
+                localStorage.setItem("people",JSON.stringify(people));
+
+                obj.member[$("#tablePopupKey").val()].paidBy.push($("#tablePopupPaidBy").val());
+                localStorage.setItem("foodList",JSON.stringify(obj));
+
+                //add New row of showing people page
+                appendNewHTMLRow2(people.eatingPeople.length-1);
+              }
+
+              //update showing all people in system
+            }
+
+            showPeopleList(currentRow.attr("id"));
+          });
+
+    $("#addEating").on('click',function(){
+
+            if($("#tablePopupEating").val()!=""){
+
+              var count=0;
+              //ถ้ายังไม่เคยมีตัวแปรก็เพิ่มเข้าไปเลย
+              for(i in people.eatingPeople){
+
+                if($("#tablePopupEating").val().toLowerCase()!=people.eatingPeople[i].name.toLowerCase()){
+                    //console.log(i,$("#tablePopupPaidBy").val(),value.paidBy[i]);
+                    count++;
+                  }else{
+                    break;
+                  }
+                  //ถ้าเช็คไปตัวแล้วยังไม่เจอตัวซ้ำถึงค่อยเพิ่มเข้าไปในรายชื่อใหม่
+                  console.log(count,people.eatingPeople.length);
+              }
+
+              if(count==people.eatingPeople.length)
+              {    
+                var memberInsidePeople={  
+                  name:$("#tablePopupEating").val(),
+                  pricePaid:"0",
+                  priceAlreadyPaid:"0"
+                  };                    
+                people.eatingPeople.push(memberInsidePeople);
+                localStorage.setItem("people",JSON.stringify(people));
+
+                obj.member[$("#tablePopupKey").val()].eating.push($("#tablePopupEating").val());
+                localStorage.setItem("foodList",JSON.stringify(obj));
+                console.log($("#tablePopupEating").val());
+
+                //add New row of showing people page
+                appendNewHTMLRow2(people.eatingPeople.length-1);
+              }
+            }
+
+            //โชว์ว่ามีการเลือกอะไรบ้างทั้ง paidby กับ eating เปลี่ยนให้เป็นสีฟ้า
+            showPeopleList(currentRow.attr("id"));
+          });
+
+    $("#enterTablePopup").on('click',function(){
+        $('#tablePopup').slideUp(100);
+        flagTurnOnClick=1;
+        var rowId=$("#tablePopupKey").val();
+        obj = JSON.parse(localStorage.getItem("foodList"));
+
+        //change data in the table
+        obj.member[rowId].food=$("#tablePopupProduct").val();
+        obj.member[rowId].price=$("#tablePopupPrice").val();
+        //if($("#tablePopupPaidBy").val()!="")obj.member[rowId].paidBy.push($("#tablePopupPaidBy").val());
+        //if($("#tablePopupEating").val()!="")obj.member[rowId].eating.push($("#tablePopupEating").val());
+
+        //console.log(obj.member[rowId].price);
+        localStorage.setItem("foodList",JSON.stringify(obj));
+
+        //to show imdieately on the table 
+        $("#"+rowId).html(htmlText(rowId));
+
+        var sumPrice=0;
+        for(i in obj.member){
+          sumPrice+=Number(obj.member[i].price);
+        }
+        $("#allPriceShow").html(sumPrice);
+
+        recalcualteEatingSharing();
+
+
+    });
+
+    $("#closeTablePopup").on('click',function(){
+      removeShowPeopleList();
+      $('#tablePopup').slideUp(100);
+      flagTurnOnClick=1;
+    });
+
+
+});
+  
+function atStartPage(){
+   //display the first tab when start
+    $("#payList").css('display','block');
+    $(".tablinks")[0].className +=" active";
+
+   //show all price
+   obj= JSON.parse(localStorage.getItem("foodList"));
+   if(obj!=null){
+     for (i in obj.member) {
+        appendNewHTMLRow(i);
+        sumPrice+=Number(obj.member[i].price);
+        //console.log(obj.member[i].price);
+      }
+   }
+   $("#allPriceShow").html(sumPrice);
+
+   //show all prople in system
+   people= JSON.parse(localStorage.getItem("people"));
+   if(people!=null){
+     for (i in people.eatingPeople) {
+        appendNewHTMLRow2(i);
+      }
+      $("#allPeopleShow").html(people.eatingPeople.length);
+   }else{
+      $("#allPeopleShow").html("0");
+   }
+
+
+   
+}
+
+
+function showPeopleList(currentRow){
+    //remove the previous show and 
+    removeShowPeopleList();
+    $("#allPeopleShow").html(people.eatingPeople.length);
+    $("#tablePopupPaidBy").val("");
+    $("#tablePopupEating").val("");
+    //create again
+    for(tdi in people.eatingPeople) //to show every member in eating list
+    {
+      var bgc="#ffffff";
+      for(j in obj.member[currentRow].paidBy) //check each member to paidby 
+      {
+        if(people.eatingPeople[tdi].name==obj.member[currentRow].paidBy[j])
+        {
+          bgc="#66bbff";
+          break;
+        }
+      }
+      $("#showPaidBy").append("<td style=\"background-color:"+bgc+"\" id=showPaidBy"+tdi+" class='showPeopleList' onclick=\"addPeopleToPaidBy("+tdi+","+currentRow+")\">"+people.eatingPeople[tdi].name+"</td>");
+
+      var bgc="#ffffff";
+      for(j in obj.member[currentRow].eating) //check each member to paidby 
+      {
+        if(people.eatingPeople[tdi].name==obj.member[currentRow].eating[j])
+        {
+          bgc="#66bbff";
+          break;
+        }
+      }
+      $("#showEating").append("<td style=\"background-color:"+bgc+"\" id=showEating"+tdi+" class='showPeopleList' onclick=\"addPeopleToEating("+tdi+","+currentRow+")\">"+people.eatingPeople[tdi].name+"</td>");
+    }
+
+}
+
+function addPeopleToPaidBy(tdi,currentRow){
+  //$("#showPaidBy"+i).css("background-color", "#ffffff");
+  obj =JSON.parse(localStorage.getItem("foodList"));
+  var bgc=hexc($("#showPaidBy"+tdi).css("background-color"));
+  if(bgc=="#66bbff"){
+    $("#showPaidBy"+tdi).css("background-color", "#ffffff");
+
+    //in case it does not have present value
+    var foundIndex=$.inArray(people.eatingPeople[tdi].name,obj.member[currentRow].paidBy);
+    if(foundIndex!=-1){
+      obj.member[currentRow].paidBy.splice(foundIndex,1 );
+    }
+    localStorage.setItem("foodList",JSON.stringify(obj));
+    
+  }else{
+    $("#showPaidBy"+tdi).css("background-color", "#66bbff");
+    obj.member[currentRow].paidBy.push(people.eatingPeople[tdi].name);
+    localStorage.setItem("foodList",JSON.stringify(obj));
+  }
+}
+function addPeopleToEating(tdi,currentRow){
+  //$("#showPaidBy"+i).css("background-color", "#ffffff");
+  obj =JSON.parse(localStorage.getItem("foodList"));
+  var bgc=hexc($("#showEating"+tdi).css("background-color"));
+  if(bgc=="#66bbff"){
+    $("#showEating"+tdi).css("background-color", "#ffffff");
+
+    //in case it does not have present value
+    var foundIndex=$.inArray(people.eatingPeople[tdi].name,obj.member[currentRow].eating);
+    if(foundIndex!=-1){
+      obj.member[currentRow].eating.splice(foundIndex,1 );
+    }
+    localStorage.setItem("foodList",JSON.stringify(obj));
+    
+  }else{
+    $("#showEating"+tdi).css("background-color", "#66bbff");
+    obj.member[currentRow].eating.push(people.eatingPeople[tdi].name);
+    localStorage.setItem("foodList",JSON.stringify(obj));
+  }
+}
+
+function hexc(colorval) {
+  var parts = colorval.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+  delete(parts[0]);
+  for (var i = 1; i <= 3; ++i) {
+    parts[i] = parseInt(parts[i]).toString(16);
+    if (parts[i].length == 1) parts[i] = '0' + parts[i];
+  }
+  return color = '#' + parts.join('');
+}
+function showEatingList(){
+  for(var i=0;i<value.eating.length;i++)
+    {
+      $("#showEating").append("<td class='showEatingCreate'>"+value.eating[i]+"</td>");
+    }
+}
+function removeShowPeopleList(){
+  $("td").remove(".showPeopleList");
+  $("td").remove(".showEatingCreate");
+}
+
+
+function appendNewHTMLRow(Id){
+
+      obj = JSON.parse(localStorage.getItem("foodList"));
+
+      // console.log the iteration key and value
+      //console.log('Key: ' + Id + ', Value: ' + obj.member[Id].food);  
+      $("#mainTable").append("<tr id=\""+Id+"\">"+htmlText(Id)+"</tr>");
+
+}
+function appendNewHTMLRow2(Id){
+
+      people = JSON.parse(localStorage.getItem("people"));
+
+      // console.log the iteration key and value
+      //console.log('Key: ' + Id + ', Value: ' + people.eatingPeople[Id]);  
+      $("#secondtable").append("<tr id=\""+Id+"\" style=\"text-align:center\"><td>"+people.eatingPeople[Id].name+"</td>\
+                                                  <td id=\"showPricePaid"+Id+"\">"+people.eatingPeople[Id].pricePaid+"</td>\
+                                                  <td id=\"showAlreadyPaid"+Id+"\">"+people.eatingPeople[Id].priceAlreadyPaid+"</td>\
+                                                  <td id=\"showRemainRecieve"+Id+"\">"+(people.eatingPeople[Id].priceAlreadyPaid-people.eatingPeople[Id].pricePaid)+"</td></tr>");
+
+}
+//$('#row"+btnId+"').hide()
+function deleteRowData(rowId){
+  $("#"+rowId).hide();
+  obj.member.splice(rowId,1)
+  localStorage.setItem("foodList",JSON.stringify(obj));
+  
+  recalcualteEatingSharing();
+        
+        
+}
+
+function htmlText(Id){
+  return "<td class=\"text\">"+obj.member[Id].food
+        +"</td><td class=\"text\">"+obj.member[Id].price
+        +"</td><td ><button class=\"w3-button w3-red w3-round-large\" id=\"deleteRow"+Id+"\" onclick=deleteRowData("+Id+") onmouseover=\"console.log("+Id+")\"><i class=\"fa fa-close\"></i></button></td>";
+}
+
+//get people data
+function recalcualteEatingSharing() {
+   
+  people= JSON.parse(localStorage.getItem("people"));
+
+  //reset before start again
+  for(i in people.eatingPeople){
+    people.eatingPeople[i].pricePaid=0;
+    people.eatingPeople[i].priceAlreadyPaid=0;
+  }
+  for(k in obj.member)
+  {
+    //get each one paid
+    var eachOneNeedToPaid=Math.ceil(obj.member[k].price/obj.member[k].eating.length);
+    var eachOneAlreadyPaid=Math.ceil(obj.member[k].price/obj.member[k].paidBy.length);
+    for(i in people.eatingPeople){
+      //for eaing
+      for(j in obj.member[k].eating){
+          if(people.eatingPeople[i].name==obj.member[k].eating[j]){
+            people.eatingPeople[i].pricePaid+=eachOneNeedToPaid;
+            break;
+          }
+      }
+      //for paidby
+      for(j in obj.member[k].paidBy){
+          if(people.eatingPeople[i].name==obj.member[k].paidBy[j]){
+            people.eatingPeople[i].priceAlreadyPaid+=eachOneAlreadyPaid;
+            break;
+          }
+      }
+    }
+  }
+  localStorage.setItem("people",JSON.stringify(people));
+  for(i in people.eatingPeople){
+    $("#showPricePaid"+i).html(people.eatingPeople[i].pricePaid);
+    $("#showAlreadyPaid"+i).html(people.eatingPeople[i].priceAlreadyPaid);
+    $("#showRemainRecieve"+i).html((people.eatingPeople[i].priceAlreadyPaid-people.eatingPeople[i].pricePaid));
+    console.log(people.eatingPeople[i].pricePaid);
+  }
+
+}
+</script>
+</html>
